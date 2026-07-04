@@ -136,6 +136,7 @@ button {
 .is-revealed .mic-control,
 .is-revealed .candle-control {
   pointer-events: none;
+  visibility: hidden;
 }
 
 .toast {

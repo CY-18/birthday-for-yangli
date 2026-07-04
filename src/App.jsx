@@ -54,13 +54,13 @@ export function App({
     >
       <img
         className="scene scene--lit"
-        src="./assets/birthday-lit.png"
+        src="./assets/birthday-lit.jpg"
         alt="点燃蜡烛的生日蛋糕"
         aria-hidden={revealed}
       />
       <img
         className="scene scene--reveal"
-        src="./assets/birthday-reveal.png"
+        src="./assets/birthday-reveal.jpg"
         alt="蜡烛熄灭后出现生日祝福"
         aria-hidden={!revealed}
       />
