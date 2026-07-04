@@ -50,6 +50,25 @@ describe("App", () => {
     });
   });
 
+  it("shows how to start the microphone and confirms when listening", async () => {
+    const detector = createDetector();
+    render(
+      <App
+        playChime={vi.fn()}
+        detectorFactory={() => detector}
+      />,
+    );
+
+    expect(screen.getByText("轻触开启麦克风")).toBeVisible();
+    fireEvent.click(
+      screen.getByRole("button", { name: "启用麦克风吹灭蜡烛" }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("正在听，请对着手机底部吹气")).toBeVisible();
+    });
+  });
+
   it("does not play the reveal chime after sound is disabled", () => {
     const playChime = vi.fn();
     render(

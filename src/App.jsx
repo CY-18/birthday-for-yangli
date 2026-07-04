@@ -83,7 +83,13 @@ export function App({
         type="button"
         aria-label={listening ? "正在聆听，请吹向蜡烛" : "启用麦克风吹灭蜡烛"}
         onClick={startListening}
-      />
+      >
+        {!error && (
+          <span className="mic-status" aria-hidden="true">
+            {listening ? "正在听，请对着手机底部吹气" : "轻触开启麦克风"}
+          </span>
+        )}
+      </button>
       <button
         className="candle-control"
         type="button"

@@ -28,16 +28,28 @@ export function createBlowDetector(onBlow) {
         throw new Error("Microphone access is unavailable");
       }
 
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          autoGainControl: false,
-          echoCancellation: true,
-          noiseSuppression: false,
-        },
-      });
-
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) {
+        throw new Error("Web Audio is unavailable");
+      }
+
       context = new AudioContextClass();
+      if (context.state === "suspended") {
+        await context.resume();
+      }
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            autoGainControl: false,
+            echoCancellation: true,
+            noiseSuppression: false,
+          },
+        });
+      } catch (error) {
+        void context.close();
+        throw error;
+      }
 
       const source = context.createMediaStreamSource(stream);
       const analyser = context.createAnalyser();
@@ -45,7 +57,7 @@ export function createBlowDetector(onBlow) {
       source.connect(analyser);
 
       const values = new Uint8Array(analyser.fftSize);
-      const gate = new BlowGate({ threshold: 0.12, holdMs: 180 });
+      const gate = new BlowGate({ threshold: 0.04, holdMs: 180 });
       let previous = performance.now();
 
       const tick = (now) => {

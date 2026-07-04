@@ -121,6 +121,24 @@ button {
   border-radius: 28px;
 }
 
+.mic-status {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  padding: 7px 12px;
+  border: 1px solid rgb(91 11 51 / 10%);
+  border-radius: 999px;
+  color: #5d0b35;
+  background: rgb(255 246 247 / 88%);
+  box-shadow: 0 6px 20px rgb(74 10 40 / 12%);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translate(-50%, -100%);
+  backdrop-filter: blur(8px);
+}
+
 .candle-control {
   top: 21%;
   left: 39%;
