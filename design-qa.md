@@ -3,13 +3,15 @@
 ## Evidence
 
 - Lit-state source truth: `/Users/YangMac/.codex/generated_images/019f2e9d-bf66-7443-b2ba-9235ab4ea638/call_o8anFJ2IHw416LvK3IOfTijO.png`
-- Reveal-state source truth: `/Users/YangMac/.codex/generated_images/019f2e9d-bf66-7443-b2ba-9235ab4ea638/call_ZbcidV2byDsMJe4F3hzM92cz.png`
+- Reveal-state source truth: `public/assets/birthday-reveal-time.jpg`
 - Lit implementation screenshot: `qa/lit-390.png`
-- Reveal implementation screenshot: `qa/reveal-390.png`
+- Reveal implementation screenshot: `qa/reveal-time-copy-390.png`
 - Revised microphone prompt screenshot: `qa/mic-prompt-390.png`
 - Focused microphone state screenshot: `qa/mic-focus-390.png`
-- Music reveal screenshot: `qa/reveal-music-390.png`
-- Full-view comparisons: `qa/compare-lit.png`, `qa/compare-reveal.png`, `qa/compare-mic-prompt.png`
+- Reveal text comparison: `qa/compare-reveal-time-copy.png`
+- Flame motion screenshots: `qa/flame-motion-a-390.png`, `qa/flame-motion-b-390.png`
+- Flame extinguish screenshots: `qa/flame-extinguish-390.png`, `qa/flame-reveal-390.png`
+- Full-view comparisons: `qa/compare-lit.png`, `qa/compare-reveal-time-copy.png`, `qa/compare-mic-prompt.png`, `qa/compare-flame-motion.png`
 - Focused comparison: `qa/compare-mic-prompt-crop.png`
 - Viewports checked: 390×844, 393×852, 430×932
 - States checked: lit, microphone activation, microphone focus, reveal with music scheduling, microphone-unavailable fallback, sound toggle
@@ -20,7 +22,7 @@
 - Spacing and layout rhythm: At 390×844, the revised microphone status sits between the decorative handwriting and the original blow instruction without covering either. The 393×852 and 430×932 captures retain the complete cake, recipient name, instruction and reveal copy.
 - Colors and visual tokens: The blush background, hot-pink display type, dark-plum handwriting and yellow accents match the source assets. The microphone status uses a 48%-opaque blush-white surface with no border; the sound control remains subordinate.
 - Image quality and asset fidelity: Source PNGs were converted to 88-quality JPEGs, reducing the two-image payload from about 3.1MB to about 599KB. Visual inspection at 390×844 shows no readable-text loss, haloing or material degradation.
-- Copy and content: Lit state contains `To 杨丽`, `轻触开启麦克风` and `吹灭蜡烛，许个愿吧`. Listening copy is exactly `对着手机底部吹气`. Reveal state contains no recipient line and shows the approved Chinese and English blessing.
+- Copy and content: Lit state contains `To 杨丽`, `轻触开启麦克风` and `吹灭蜡烛，许个愿吧`. Listening copy is exactly `对着手机底部吹气`. Reveal state contains no recipient line and shows `又长大一岁，但你仍然是时间流逝中的例外。` with the approved English supporting line.
 - Icons and controls: The sound icon comes from Phosphor Icons. The microphone and waveform remain part of the approved image. Transparent semantic buttons make the visible microphone and candle areas functional.
 - Accessibility: All controls have Chinese accessible names, tap targets exceed 44px, reduced motion is supported, and the microphone-denied path provides a visible fallback message. The microphone focus indicator is now confined to its visible status pill instead of outlining the full invisible hit area.
 
@@ -41,6 +43,11 @@
   - Impact: The large rectangle broke the poster composition.
   - Fix: Remove the large microphone outline and retain a low-contrast focus ring on the visible pill.
 
+- [Resolved P2] Candle flame lacked visible motion.
+  - Evidence: `qa/flame-motion-a-390.png` and `qa/flame-motion-b-390.png` show distinct flame width, tilt and brightness states while retaining alignment with the candle wick.
+  - Impact: The original raster flame read as static, weakening the invitation to blow.
+  - Fix: Extract the source flame as a transparent image layer, then animate sway, scale, brightness and warm drop shadow. On reveal, shrink and fade the layer before the scene transition completes.
+
 - [Accepted P3] Sound control is not present in the source visual.
   - Evidence: The implementation adds one 38px translucent control at the top-right.
   - Rationale: The user approved a sound toggle; its treatment follows the source palette and does not alter the main hierarchy.
@@ -57,9 +64,12 @@
 - Moved the microphone status to the user-approved middle position and increased its transparency.
 - Replaced the large yellow microphone outline with a subtle status-pill focus treatment.
 - Replaced the three-tone chime with a 13.75-second slow jazz birthday arrangement and verified scheduling through automated tests.
+- Increased phone blow sensitivity with unprocessed microphone constraints, float waveform sampling, a 0.01 threshold and 80ms dropout tolerance.
+- Added a source-derived animated flame layer and verified both lit keyframes and the extinguish transition at 390×844.
+- Replaced the reveal headline with the approved time-themed sentence and verified the three-line layout against the new source image at 390×844.
 
 ## Remaining Test Gap
 
-- The in-app browser does not expose microphone input, so real acoustic blow detection must be checked once on a physical phone after GitHub Pages deployment. The permission failure and candle-tap fallback paths are verified.
+- The in-app browser does not expose real acoustic input, so phone hardware remains the final check. Automated tests now cover low-amplitude float input, raw microphone constraints and short signal dropouts; permission failure and candle-tap fallback paths are also verified.
 
 final result: passed

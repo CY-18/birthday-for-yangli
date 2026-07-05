@@ -30,6 +30,11 @@ describe("App", () => {
       />,
     );
 
+    expect(screen.getByTestId("flame-effect")).toBeVisible();
+    expect(screen.getByAltText("蜡烛熄灭后出现生日祝福")).toHaveAttribute(
+      "src",
+      "./assets/birthday-reveal-time.jpg",
+    );
     const candle = screen.getByRole("button", { name: "轻触熄灭蜡烛" });
     fireEvent.click(candle);
     fireEvent.click(candle);

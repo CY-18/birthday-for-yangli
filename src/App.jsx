@@ -69,9 +69,16 @@ export function App({
       />
       <img
         className="scene scene--reveal"
-        src="./assets/birthday-reveal.jpg"
+        src="./assets/birthday-reveal-time.jpg"
         alt="蜡烛熄灭后出现生日祝福"
         aria-hidden={!revealed}
+      />
+      <img
+        className="flame-effect"
+        src="./assets/candle-flame.png"
+        alt=""
+        aria-hidden="true"
+        data-testid="flame-effect"
       />
 
       <button
