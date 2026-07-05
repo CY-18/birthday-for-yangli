@@ -30,7 +30,10 @@ describe("App", () => {
       />,
     );
 
-    expect(screen.getByTestId("flame-effect")).toBeVisible();
+    expect(screen.getByTestId("flame-effect")).toHaveAttribute(
+      "src",
+      "./assets/candle-flame-layer.png",
+    );
     expect(screen.getByAltText("蜡烛熄灭后出现生日祝福")).toHaveAttribute(
       "src",
       "./assets/birthday-reveal-time.jpg",

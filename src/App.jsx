@@ -75,7 +75,7 @@ export function App({
       />
       <img
         className="flame-effect"
-        src="./assets/candle-flame.png"
+        src="./assets/candle-flame-layer.png"
         alt=""
         aria-hidden="true"
         data-testid="flame-effect"

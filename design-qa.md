@@ -11,9 +11,12 @@
 - Reveal text comparison: `qa/compare-reveal-time-copy.png`
 - Flame motion screenshots: `qa/flame-motion-a-390.png`, `qa/flame-motion-b-390.png`
 - Flame extinguish screenshots: `qa/flame-extinguish-390.png`, `qa/flame-reveal-390.png`
+- User-reported alignment evidence: `/Users/YangMac/Downloads/微信图片_20260705103340_38_2.jpg`
+- Embedded-browser alignment screenshots: `qa/flame-misaligned-390x786.png`, `qa/flame-aligned-390x786-a.png`, `qa/flame-aligned-390x786-b.png`
+- Alignment comparisons: `qa/compare-flame-alignment-390x786.png`, `qa/compare-flame-alignment-crop.png`
 - Full-view comparisons: `qa/compare-lit.png`, `qa/compare-reveal-time-copy.png`, `qa/compare-mic-prompt.png`, `qa/compare-flame-motion.png`
 - Focused comparison: `qa/compare-mic-prompt-crop.png`
-- Viewports checked: 390×844, 393×852, 430×932
+- Viewports checked: 390×786, 390×844, 393×852, 430×932
 - States checked: lit, microphone activation, microphone focus, reveal with music scheduling, microphone-unavailable fallback, sound toggle
 
 ## Required Fidelity Surfaces
@@ -48,6 +51,11 @@
   - Impact: The original raster flame read as static, weakening the invitation to blow.
   - Fix: Extract the source flame as a transparent image layer, then animate sway, scale, brightness and warm drop shadow. On reveal, shrink and fade the layer before the scene transition completes.
 
+- [Resolved P1] Animated flame shifted below the source flame in an embedded mobile browser.
+  - Evidence: The user screenshot and `qa/flame-misaligned-390x786.png` show a second bright flame patch below the raster flame. The focused before/after comparison in `qa/compare-flame-alignment-crop.png` shows the corrected overlap.
+  - Impact: The duplicated flame broke the candle illusion on the actual delivery surface.
+  - Fix: Replace the independently positioned 120×140 crop with an 853×1844 transparent flame layer and apply the same `object-fit: cover` and centered crop rules as the poster image.
+
 - [Accepted P3] Sound control is not present in the source visual.
   - Evidence: The implementation adds one 38px translucent control at the top-right.
   - Rationale: The user approved a sound toggle; its treatment follows the source palette and does not alter the main hierarchy.
@@ -67,6 +75,7 @@
 - Increased phone blow sensitivity with unprocessed microphone constraints, float waveform sampling, a 0.01 threshold and 80ms dropout tolerance.
 - Added a source-derived animated flame layer and verified both lit keyframes and the extinguish transition at 390×844.
 - Replaced the reveal headline with the approved time-themed sentence and verified the three-line layout against the new source image at 390×844.
+- Rebuilt the flame as a full-poster transparent layer so it stays aligned when embedded browsers crop the 390×844 poster into a shorter 390×786 viewport.
 
 ## Remaining Test Gap
 
