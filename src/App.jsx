@@ -1,7 +1,25 @@
 import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { createBlowDetector } from "./blow-detector";
+import { positionFlameForCover } from "./flame-position";
 import { createBirthdayMusicPlayer } from "./sound";
+
+const FLAME_SOURCE = {
+  sourceWidth: 853,
+  sourceHeight: 1844,
+  rect: {
+    x: 385,
+    y: 445,
+    width: 100,
+    height: 125,
+  },
+};
 
 export function App({
   detectorFactory = createBlowDetector,
@@ -11,7 +29,9 @@ export function App({
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [listening, setListening] = useState(false);
   const [error, setError] = useState(false);
+  const [flameStyle, setFlameStyle] = useState();
   const detectorRef = useRef();
+  const experienceRef = useRef();
   const musicPlayerRef = useRef();
   const revealedRef = useRef(false);
   const soundEnabledRef = useRef(true);
@@ -30,6 +50,37 @@ export function App({
     return () => {
       detectorRef.current?.stop();
       musicPlayerRef.current.destroy();
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const experience = experienceRef.current;
+    if (!experience) return undefined;
+
+    const updateFlamePosition = () => {
+      const { width, height } = experience.getBoundingClientRect();
+      if (!width || !height) return;
+
+      setFlameStyle(
+        positionFlameForCover({
+          ...FLAME_SOURCE,
+          containerWidth: width,
+          containerHeight: height,
+        }),
+      );
+    };
+
+    updateFlamePosition();
+    const observer =
+      typeof ResizeObserver === "function"
+        ? new ResizeObserver(updateFlamePosition)
+        : undefined;
+    observer?.observe(experience);
+    window.addEventListener("resize", updateFlamePosition);
+
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", updateFlamePosition);
     };
   }, []);
 
@@ -58,12 +109,13 @@ export function App({
 
   return (
     <main
+      ref={experienceRef}
       className={`experience${revealed ? " is-revealed" : ""}${listening ? " is-listening" : ""}`}
       data-testid="experience"
     >
       <img
         className="scene scene--lit"
-        src="./assets/birthday-lit.jpg"
+        src="./assets/birthday-lit-no-flame.jpg"
         alt="点燃蜡烛的生日蛋糕"
         aria-hidden={revealed}
       />
@@ -74,11 +126,12 @@ export function App({
         aria-hidden={!revealed}
       />
       <img
-        className="flame-effect"
-        src="./assets/candle-flame-layer.png"
+        className={`flame-effect${flameStyle ? " is-positioned" : ""}`}
+        src="./assets/candle-flame-small.png"
         alt=""
         aria-hidden="true"
         data-testid="flame-effect"
+        style={flameStyle}
       />
 
       <button

@@ -30,9 +30,13 @@ describe("App", () => {
       />,
     );
 
+    expect(screen.getByAltText("点燃蜡烛的生日蛋糕")).toHaveAttribute(
+      "src",
+      "./assets/birthday-lit-no-flame.jpg",
+    );
     expect(screen.getByTestId("flame-effect")).toHaveAttribute(
       "src",
-      "./assets/candle-flame-layer.png",
+      "./assets/candle-flame-small.png",
     );
     expect(screen.getByAltText("蜡烛熄灭后出现生日祝福")).toHaveAttribute(
       "src",

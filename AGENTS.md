@@ -15,5 +15,5 @@ When implementing from a selected generated mock, treat that image as the source
 - Reveal copy: `又长大一岁，但你仍然是时间流逝中的例外。` with `ANOTHER YEAR. STILL THE EXCEPTION.` as supporting text.
 - Use microphone blow detection with candle-tap fallback.
 - Prioritize blow-detection sensitivity on phones: request unprocessed audio, use float samples, and tolerate brief signal dips.
-- Keep the candle flame visibly animated with sway, brightness breathing, warm glow, and a clear extinguish transition.
+- Keep the base poster free of any baked-in flame. Animate only a tightly cropped, fully opaque flame above the wick; compute its position from the poster's cover crop so no full-canvas frame or surrounding artwork moves.
 - No continuous background music; play the short slow-jazz birthday arrangement once on reveal and provide a sound toggle.

@@ -3,8 +3,9 @@
 ## Evidence
 
 - Lit-state source truth: `/Users/YangMac/.codex/generated_images/019f2e9d-bf66-7443-b2ba-9235ab4ea638/call_o8anFJ2IHw416LvK3IOfTijO.png`
+- No-flame lit base: `public/assets/birthday-lit-no-flame.jpg`
 - Reveal-state source truth: `public/assets/birthday-reveal-time.jpg`
-- Lit implementation screenshot: `qa/lit-390.png`
+- Lit implementation screenshots: `qa/flame-clean-390x786-a.png`, `qa/flame-clean-390x786-b.png`, `qa/flame-clean-390x844.png`
 - Reveal implementation screenshot: `qa/reveal-time-copy-390.png`
 - Revised microphone prompt screenshot: `qa/mic-prompt-390.png`
 - Focused microphone state screenshot: `qa/mic-focus-390.png`
@@ -14,6 +15,8 @@
 - User-reported alignment evidence: `/Users/YangMac/Downloads/微信图片_20260705103340_38_2.jpg`
 - Embedded-browser alignment screenshots: `qa/flame-misaligned-390x786.png`, `qa/flame-aligned-390x786-a.png`, `qa/flame-aligned-390x786-b.png`
 - Alignment comparisons: `qa/compare-flame-alignment-390x786.png`, `qa/compare-flame-alignment-crop.png`
+- Clean flame comparisons: `qa/compare-flame-clean-motion.png`, `qa/compare-flame-clean-crop.png`
+- Clean extinguish screenshots: `qa/flame-clean-extinguish-390.png`, `qa/flame-clean-reveal-390.png`
 - Full-view comparisons: `qa/compare-lit.png`, `qa/compare-reveal-time-copy.png`, `qa/compare-mic-prompt.png`, `qa/compare-flame-motion.png`
 - Focused comparison: `qa/compare-mic-prompt-crop.png`
 - Viewports checked: 390×786, 390×844, 393×852, 430×932
@@ -47,14 +50,19 @@
   - Fix: Remove the large microphone outline and retain a low-contrast focus ring on the visible pill.
 
 - [Resolved P2] Candle flame lacked visible motion.
-  - Evidence: `qa/flame-motion-a-390.png` and `qa/flame-motion-b-390.png` show distinct flame width, tilt and brightness states while retaining alignment with the candle wick.
+  - Evidence: `qa/flame-clean-390x786-a.png` and `qa/flame-clean-390x786-b.png` show distinct flame width, tilt and brightness states while all surrounding artwork remains static.
   - Impact: The original raster flame read as static, weakening the invitation to blow.
-  - Fix: Extract the source flame as a transparent image layer, then animate sway, scale, brightness and warm drop shadow. On reveal, shrink and fade the layer before the scene transition completes.
+  - Fix: Remove the baked-in flame from the poster, then animate only a tightly cropped flame asset at full opacity. On reveal, shrink and fade that small asset before the scene transition completes.
 
 - [Resolved P1] Animated flame shifted below the source flame in an embedded mobile browser.
   - Evidence: The user screenshot and `qa/flame-misaligned-390x786.png` show a second bright flame patch below the raster flame. The focused before/after comparison in `qa/compare-flame-alignment-crop.png` shows the corrected overlap.
   - Impact: The duplicated flame broke the candle illusion on the actual delivery surface.
-  - Fix: Replace the independently positioned 120×140 crop with an 853×1844 transparent flame layer and apply the same `object-fit: cover` and centered crop rules as the poster image.
+  - Fix: Compute the small flame's pixel rectangle from the same `object-fit: cover` scale and crop offsets used by the poster at every container size.
+
+- [Resolved P1] Full-page animated layer produced an outer ghost frame.
+  - Evidence: The full-poster transparent-layer attempt moved a faint rectangular boundary with the flame. `qa/compare-flame-clean-motion.png` shows the final two animation states with identical page edges, cake and typography.
+  - Impact: The animated frame made the entire poster appear doubled instead of isolating the candlelight.
+  - Fix: Remove the full-poster animated layer entirely. Use `birthday-lit-no-flame.jpg` as the static base and animate only `candle-flame-small.png`.
 
 - [Accepted P3] Sound control is not present in the source visual.
   - Evidence: The implementation adds one 38px translucent control at the top-right.
@@ -62,7 +70,7 @@
 
 ## Focused Region Comparison
 
-`qa/compare-mic-prompt-crop.png` compares the source and implementation bottom 220px at the same 390px width. The translucent status remains distinct from the baked-in microphone instruction and does not cover the decorative handwriting.
+`qa/compare-mic-prompt-crop.png` compares the source and implementation bottom 220px at the same 390px width. `qa/compare-flame-clean-crop.png` isolates the candle region across two animation frames and confirms that only the flame changes.
 
 ## Patches Since First QA Pass
 
@@ -73,9 +81,10 @@
 - Replaced the large yellow microphone outline with a subtle status-pill focus treatment.
 - Replaced the three-tone chime with a 13.75-second slow jazz birthday arrangement and verified scheduling through automated tests.
 - Increased phone blow sensitivity with unprocessed microphone constraints, float waveform sampling, a 0.01 threshold and 80ms dropout tolerance.
-- Added a source-derived animated flame layer and verified both lit keyframes and the extinguish transition at 390×844.
+- Added a source-derived animated flame and verified both lit keyframes and the extinguish transition at 390×844.
 - Replaced the reveal headline with the approved time-themed sentence and verified the three-line layout against the new source image at 390×844.
-- Rebuilt the flame as a full-poster transparent layer so it stays aligned when embedded browsers crop the 390×844 poster into a shorter 390×786 viewport.
+- Removed the superseded full-poster transparent layer after it produced an outer ghost frame.
+- Created a no-flame base poster and positioned a small full-opacity flame with tested cover-crop coordinates at 390×786 and 390×844.
 
 ## Remaining Test Gap
 
