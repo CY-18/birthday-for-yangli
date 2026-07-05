@@ -10,13 +10,23 @@ function createDetector(overrides = {}) {
   };
 }
 
+function createMusicPlayer(overrides = {}) {
+  return {
+    prepare: vi.fn(),
+    play: vi.fn(),
+    stop: vi.fn(),
+    destroy: vi.fn(),
+    ...overrides,
+  };
+}
+
 describe("App", () => {
   it("reveals once when the candle is tapped", () => {
-    const playChime = vi.fn();
+    const player = createMusicPlayer();
     render(
       <App
-        playChime={playChime}
         detectorFactory={() => createDetector()}
+        musicPlayerFactory={() => player}
       />,
     );
 
@@ -25,7 +35,7 @@ describe("App", () => {
     fireEvent.click(candle);
 
     expect(screen.getByTestId("experience")).toHaveClass("is-revealed");
-    expect(playChime).toHaveBeenCalledTimes(1);
+    expect(player.play).toHaveBeenCalledTimes(1);
   });
 
   it("shows the tap fallback when microphone access fails", async () => {
@@ -34,8 +44,8 @@ describe("App", () => {
     });
     render(
       <App
-        playChime={vi.fn()}
         detectorFactory={() => detector}
+        musicPlayerFactory={() => createMusicPlayer()}
       />,
     );
 
@@ -52,10 +62,11 @@ describe("App", () => {
 
   it("shows how to start the microphone and confirms when listening", async () => {
     const detector = createDetector();
+    const player = createMusicPlayer();
     render(
       <App
-        playChime={vi.fn()}
         detectorFactory={() => detector}
+        musicPlayerFactory={() => player}
       />,
     );
 
@@ -65,22 +76,25 @@ describe("App", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("正在听，请对着手机底部吹气")).toBeVisible();
+      expect(screen.getByText("对着手机底部吹气")).toBeVisible();
     });
+    expect(screen.queryByText(/正在听/)).not.toBeInTheDocument();
+    expect(player.prepare).toHaveBeenCalledOnce();
   });
 
-  it("does not play the reveal chime after sound is disabled", () => {
-    const playChime = vi.fn();
+  it("does not play music and stops active audio after sound is disabled", () => {
+    const player = createMusicPlayer();
     render(
       <App
-        playChime={playChime}
         detectorFactory={() => createDetector()}
+        musicPlayerFactory={() => player}
       />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "关闭声音" }));
     fireEvent.click(screen.getByRole("button", { name: "轻触熄灭蜡烛" }));
 
-    expect(playChime).toHaveBeenCalledWith(false);
+    expect(player.stop).toHaveBeenCalled();
+    expect(player.play).toHaveBeenCalledWith(false);
   });
 });

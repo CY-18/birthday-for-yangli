@@ -97,10 +97,17 @@ button {
 }
 
 .sound-toggle:focus-visible,
-.mic-control:focus-visible,
 .candle-control:focus-visible {
   outline: 3px solid #fff3a3;
   outline-offset: 2px;
+}
+
+.mic-control:focus-visible {
+  outline: 0;
+}
+
+.mic-control:focus-visible .mic-status {
+  box-shadow: 0 0 0 2px rgb(93 11 53 / 18%);
 }
 
 .mic-control,
@@ -123,14 +130,14 @@ button {
 
 .mic-status {
   position: absolute;
-  top: 0;
+  top: 18%;
   left: 50%;
   padding: 7px 12px;
-  border: 1px solid rgb(91 11 51 / 10%);
+  border: 0;
   border-radius: 999px;
   color: #5d0b35;
-  background: rgb(255 246 247 / 88%);
-  box-shadow: 0 6px 20px rgb(74 10 40 / 12%);
+  background: rgb(255 246 247 / 48%);
+  box-shadow: 0 4px 16px rgb(74 10 40 / 7%);
   font-size: 13px;
   font-weight: 600;
   line-height: 1.2;
@@ -145,10 +152,6 @@ button {
   width: 22%;
   height: 31%;
   border-radius: 999px;
-}
-
-.is-listening .mic-control {
-  box-shadow: 0 0 0 2px rgb(255 243 163 / 48%) inset;
 }
 
 .is-revealed .mic-control,

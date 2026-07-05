@@ -1,19 +1,21 @@
 import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createBlowDetector } from "./blow-detector";
-import { playRevealChime } from "./sound";
+import { createBirthdayMusicPlayer } from "./sound";
 
 export function App({
   detectorFactory = createBlowDetector,
-  playChime = playRevealChime,
+  musicPlayerFactory = createBirthdayMusicPlayer,
 }) {
   const [revealed, setRevealed] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [listening, setListening] = useState(false);
   const [error, setError] = useState(false);
   const detectorRef = useRef();
+  const musicPlayerRef = useRef();
   const revealedRef = useRef(false);
   const soundEnabledRef = useRef(true);
+  musicPlayerRef.current ??= musicPlayerFactory();
 
   const reveal = useCallback(() => {
     if (revealedRef.current) return;
@@ -21,11 +23,14 @@ export function App({
     revealedRef.current = true;
     detectorRef.current?.stop();
     setRevealed(true);
-    playChime(soundEnabledRef.current);
-  }, [playChime]);
+    musicPlayerRef.current.play(soundEnabledRef.current);
+  }, []);
 
   useEffect(() => {
-    return () => detectorRef.current?.stop();
+    return () => {
+      detectorRef.current?.stop();
+      musicPlayerRef.current.destroy();
+    };
   }, []);
 
   const startListening = async () => {
@@ -33,6 +38,7 @@ export function App({
 
     detectorRef.current ??= detectorFactory(reveal);
     setError(false);
+    musicPlayerRef.current.prepare();
 
     try {
       await detectorRef.current.start();
@@ -45,6 +51,9 @@ export function App({
   const toggleSound = () => {
     soundEnabledRef.current = !soundEnabledRef.current;
     setSoundEnabled(soundEnabledRef.current);
+    if (!soundEnabledRef.current) {
+      musicPlayerRef.current.stop();
+    }
   };
 
   return (
@@ -86,7 +95,7 @@ export function App({
       >
         {!error && (
           <span className="mic-status" aria-hidden="true">
-            {listening ? "正在听，请对着手机底部吹气" : "轻触开启麦克风"}
+            {listening ? "对着手机底部吹气" : "轻触开启麦克风"}
           </span>
         )}
       </button>
